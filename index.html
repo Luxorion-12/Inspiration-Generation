@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>灵感融合器 - 创新点子生成工具</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#380019",
+              "on-primary-fixed": "#000000",
+              "surface-tint": "#6a1cf6",
+              "tertiary-fixed": "#ff8db2",
+              "surface-container-low": "#eff1f2",
+              "tertiary-fixed-dim": "#f57ca5",
+              "on-primary-container": "#2a0070",
+              "on-secondary-fixed": "#49147f",
+              "tertiary-dim": "#8d2951",
+              "secondary": "#7343a9",
+              "outline-variant": "#abadae",
+              "tertiary-container": "#ff8db2",
+              "inverse-primary": "#9d79ff",
+              "primary-fixed-dim": "#a07dff",
+              "inverse-surface": "#0c0f10",
+              "surface": "#f5f6f7",
+              "secondary-fixed": "#e3c6ff",
+              "surface-variant": "#dadddf",
+              "error-container": "#f74b6d",
+              "error": "#b41340",
+              "surface-dim": "#d1d5d7",
+              "surface-container-highest": "#dadddf",
+              "on-tertiary": "#ffeff1",
+              "on-surface-variant": "#595c5d",
+              "on-secondary": "#faefff",
+              "primary-dim": "#5d00e3",
+              "on-surface": "#2c2f30",
+              "on-secondary-container": "#5e2d93",
+              "primary-container": "#ac8eff",
+              "on-error": "#ffefef",
+              "surface-container-lowest": "#ffffff",
+              "on-primary": "#f7f0ff",
+              "background": "#f5f6f7",
+              "surface-bright": "#f5f6f7",
+              "primary": "#6a1cf6",
+              "secondary-container": "#e3c6ff",
+              "primary-fixed": "#ac8eff",
+              "on-error-container": "#510017",
+              "inverse-on-surface": "#9b9d9e",
+              "on-primary-fixed-variant": "#350088",
+              "outline": "#757778",
+              "on-secondary-fixed-variant": "#67389d",
+              "on-tertiary-container": "#640332",
+              "surface-container": "#e6e8ea",
+              "secondary-fixed-dim": "#d8b5ff",
+              "on-tertiary-fixed-variant": "#70103b",
+              "on-background": "#2c2f30",
+              "secondary-dim": "#66369c",
+              "error-dim": "#a70138",
+              "surface-container-high": "#e0e3e4",
+              "tertiary": "#9d365d"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "PingFang SC", "sans-serif"],
+              "body": ["Manrope", "PingFang SC", "sans-serif"],
+              "label": ["Manrope", "PingFang SC", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .asymmetric-shadow {
+        box-shadow: 0 24px 48px -12px rgba(93, 0, 227, 0.08);
+      }
+      @keyframes pulse-light {
+        0%, 100% { opacity: 0.1; }
+        50% { opacity: 0.25; }
+      }
+      .stream-item:hover .stream-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+      .grid-item.with-icon {
+        background: rgba(106, 28, 246, 0.1);
+        border: 2px dashed rgba(106, 28, 246, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .grid-item.with-icon .material-symbols-outlined {
+        color: #6a1cf6;
+        font-size: 28px;
+      }
+      .fusion-btn.enabled {
+        cursor: pointer;
+      }
+      .fusion-btn.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .input-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        z-index: 50;
+      }
+      .input-overlay.active {
+        display: flex;
+      }
+      .input-overlay input {
+        width: 90%;
+        padding: 4px 8px;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        text-align: center;
+        background: transparent;
+        color: #ffffff;
+        font-weight: 600;
+        caret-color: #ffffff;
+      }
+      .input-overlay input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .input-overlay input:focus {
+        outline: none;
+      }
+      @keyframes fusion-left {
+        0% {
+          opacity: 1;
+          transform: translate(-140px, -100px);
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translate(0, 350px);
+        }
+      }
+      @keyframes fusion-right {
+        0% {
+          opacity: 1;
+          transform: translate(140px, -100px);
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translate(0, 350px);
+        }
+      }
+      @keyframes slide-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes dots {
+        0%, 20% { content: '.'; }
+        40% { content: '..'; }
+        60%, 100% { content: '...'; }
+      }
+      .loading-dots {
+        display: inline;
+        min-width: 12px;
+      }
+      .animate-slide-up {
+        animation: slide-up 0.5s ease-out forwards;
+      }
+      .fusion-particle {
+        position: fixed;
+        pointer-events: none;
+      }
+      .fusion-particle.from-left {
+        animation: fusion-left 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+      .fusion-particle.from-right {
+        animation: fusion-right 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen">
+<!-- Top Navigation Anchor -->
+<header class="bg-[#f5f6f7] dark:bg-slate-900 sticky top-0 z-50 tonal-shift-bg">
+<div class="flex justify-between items-center h-20 px-10 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#6a1cf6] text-3xl" data-icon="hub">hub</span>
+<h1 class="font-headline font-black text-2xl tracking-tight text-[#2c2f30] dark:text-white">灵感融合器</h1>
+</div>
+
+<div class="flex items-center gap-4 relative">
+<button id="refresh-btn" class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary transition-transform active:scale-90" data-icon="refresh" title="刷新页面">refresh</button>
+<div class="relative group">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary transition-transform active:scale-90" data-icon="help" title="项目介绍">help</button>
+<div class="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-800 text-on-surface dark:text-white p-4 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+<p class="text-sm font-semibold mb-2">灵感融合器</p>
+<p class="text-xs text-on-surface-variant dark:text-slate-400 leading-relaxed">
+融合行业属性与目标客群，通过AI驱动的创意引擎生成极具商业潜力的创新点子。只需选择您的行业和目标客户，系统将自动生成相关关键词，并基于两个维度的交集产生多条创新建议。
+</p>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-10 py-6 md:py-12">
+<!-- Header Text -->
+<div class="text-center mb-12">
+<h2 class="font-headline text-5xl font-extrabold text-on-surface tracking-tight mb-3">开启您的创意流</h2>
+<p class="text-on-surface-variant text-lg max-w-2xl mx-auto leading-relaxed">融合行业属性与目标客群，生成极具商业潜力的创新点子。点击中心的融合按钮，见证灵感的碰撞。</p>
+</div>
+<!-- Generator Interface -->
+<div class="relative flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-24">
+<!-- Left Grid: Industry/Product -->
+<div class="flex-1 w-full max-w-md">
+<div class="mb-6 flex items-center gap-2 px-2">
+<span class="material-symbols-outlined text-primary" data-icon="category">category</span>
+<h3 class="font-headline font-bold text-xl text-on-surface">行业 / 产品</h3>
+</div>
+<div class="grid grid-cols-3 gap-3 p-4 bg-surface-container rounded-[2rem]">
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">智能家居</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">绿色能源</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">在线教育</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">数字艺术</div>
+<div class="aspect-square bg-primary text-on-primary rounded-xl flex flex-col items-center justify-center p-4 text-center shadow-[0_0_20px_rgba(106,28,246,0.3)] border-2 border-primary-container z-10 scale-105 cursor-pointer grid-item grid-center relative" id="left-center">
+<span class="material-symbols-outlined mb-1 center-icon" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold center-label">核心行业</span>
+<span class="text-[10px] opacity-80 mt-1 center-desc">点击编辑</span>
+<div class="input-overlay">
+<input type="text" placeholder="输入行业名称" class="grid-input"/>
+</div>
+</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">宠物经济</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">预制菜</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">元宇宙</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">大健康</div>
+</div>
+</div>
+<!-- Central Action Button -->
+<div class="relative z-20 -my-4 md:my-0">
+<button class="fusion-btn disabled w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary-dim text-on-primary flex items-center justify-center shadow-[0_12px_32px_rgba(93,0,227,0.3)] hover:scale-110 hover:shadow-[0_16px_40px_rgba(93,0,227,0.4)] transition-all duration-300 active:scale-95 group" id="fusion-btn">
+<span class="material-symbols-outlined text-4xl group-hover:rotate-90 transition-transform duration-500" data-icon="add">add</span>
+</button>
+<div class="absolute top-full left-1/2 -translate-x-1/2 w-0.5 h-16 bg-gradient-to-b from-primary/30 to-transparent hidden md:block mt-4"></div>
+</div>
+<!-- Right Grid: Customer Targets -->
+<div class="flex-1 w-full max-w-md">
+<div class="mb-6 flex items-center gap-2 px-2 md:justify-end">
+<h3 class="font-headline font-bold text-xl text-on-surface">客户对象</h3>
+<span class="material-symbols-outlined text-primary" data-icon="groups">groups</span>
+</div>
+<div class="grid grid-cols-3 gap-3 p-4 bg-surface-container rounded-[2rem]">
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">职场新人</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">银发族</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">企业高管</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">数字游民</div>
+<div class="aspect-square bg-primary text-on-primary rounded-xl flex flex-col items-center justify-center p-4 text-center shadow-[0_0_20px_rgba(106,28,246,0.3)] border-2 border-primary-container z-10 scale-105 cursor-pointer grid-item grid-center relative" id="right-center">
+<span class="material-symbols-outlined mb-1 center-icon" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-xs font-bold center-label">核心受众</span>
+<span class="text-[10px] opacity-80 mt-1 center-desc">点击编辑</span>
+<div class="input-overlay">
+<input type="text" placeholder="输入客户对象" class="grid-input"/>
+</div>
+</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">中小商户</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">独立女性</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">健身达人</div>
+<div class="aspect-square bg-surface-container-lowest rounded-xl flex items-center justify-center p-4 text-center text-sm font-semibold text-on-surface-variant hover:shadow-lg transition-all cursor-pointer grid-item">新手父母</div>
+</div>
+</div>
+</div>
+<!-- Results Area (Unified Stream Layout) -->
+<section class="mt-12">
+<div class="flex flex-col items-center mb-8">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container/20 text-primary rounded-full text-sm font-bold mb-4">
+<span class="material-symbols-outlined text-lg" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                生成的灵感流
+            </div>
+</div>
+<!-- Unified Results Container -->
+<div class="bg-surface-container-lowest rounded-[2.5rem] asymmetric-shadow border border-outline-variant/10 overflow-hidden">
+<div class="divide-y divide-outline-variant/10">
+<!-- Bottom Call to Action within the box -->
+<div class="p-6 bg-surface-container/20 border-b border-outline-variant/10 text-center">
+<p class="text-on-surface-variant text-sm font-medium">等待您的灵感生成。</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<footer class="md:hidden">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-6 pb-safe bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl h-20 border-t border-[#abadae]/15 shadow-[0_-4px_24px_rgba(93,0,227,0.06)] z-50">
+<button class="flex flex-col items-center justify-center text-[#6a1cf6] dark:text-[#ac8eff] font-bold font-label">
+<span class="material-symbols-outlined" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="text-[12px] mt-1">生成器</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#595c5d] dark:text-slate-500 font-label hover:bg-[#eff1f2] dark:hover:bg-slate-800 rounded-xl px-4 py-1">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="text-[12px] mt-1">我的收藏</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#595c5d] dark:text-slate-500 font-label hover:bg-[#eff1f2] dark:hover:bg-slate-800 rounded-xl px-4 py-1">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[12px] mt-1">设置</span>
+</button>
+</div>
+</footer>
+<script>
+  // State management
+  let leftGridValue = '';
+  let rightGridValue = '';
+  let leftKeywords = [];
+  let rightKeywords = [];
+  let isLeftEditing = false;
+  let isRightEditing = false;
+  let generatedIdeas = [];
+  
+  // API Base URL (调用后端服务)
+  const API_BASE = '/api';
+  
+  const iconMappings = {
+    left: ['smart_toy', 'solar_power', 'school', 'palette', 'pets', 'restaurant', 'public', 'health_and_beauty'],
+    right: ['work', 'elderly', 'business_center', 'travel_explore', 'storefront', 'wc', 'fitness_center', 'child_care']
+  };
+  
+  // Call backend API to generate keywords
+  async function generateKeywords(term, isLeft = true) {
+    try {
+      const response = await fetch(`${API_BASE}/keywords`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ term, isLeft })
+      });
+
+      if (!response.ok) {
+        console.error('API Error:', response.status);
+        return null;
+      }
+
+      const data = await response.json();
+      return data.keywords || null;
+    } catch (error) {
+      console.error('Error calling API:', error);
+      return null;
+    }
+  }
+  
+  // Call backend API to generate business ideas
+  async function generateBusinessIdeas(leftTerm, leftKeywords, rightTerm, rightKeywords) {
+    try {
+      const response = await fetch(`${API_BASE}/ideas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          leftTerm,
+          leftKeywords,
+          rightTerm,
+          rightKeywords
+        })
+      });
+
+      if (!response.ok) {
+        console.error('API Error:', response.status);
+        return null;
+      }
+
+      const data = await response.json();
+      return data.ideas || null;
+    } catch (error) {
+      console.error('Error calling API:', error);
+      return null;
+    }
+  }
+  
+  // Get grid items
+  const leftCenter = document.getElementById('left-center');
+  const rightCenter = document.getElementById('right-center');
+  const fusionBtn = document.getElementById('fusion-btn');
+  
+  // Handle left grid input
+  leftCenter.addEventListener('click', function(e) {
+    if (isLeftEditing) return;
+    isLeftEditing = true;
+    
+    const icon = leftCenter.querySelector('.center-icon');
+    const label = leftCenter.querySelector('.center-label');
+    const desc = leftCenter.querySelector('.center-desc');
+    
+    // Immediately hide the label/desc
+    icon.style.display = 'none';
+    label.style.display = 'none';
+    desc.style.opacity = '0';
+    desc.style.visibility = 'hidden';
+    
+    const overlay = leftCenter.querySelector('.input-overlay');
+    const input = leftCenter.querySelector('.grid-input');
+    overlay.classList.add('active');
+    input.value = leftGridValue;
+    input.focus();
+    input.select();
+  });
+  
+  // Handle right grid input
+  rightCenter.addEventListener('click', function(e) {
+    if (isRightEditing) return;
+    isRightEditing = true;
+    
+    const icon = rightCenter.querySelector('.center-icon');
+    const label = rightCenter.querySelector('.center-label');
+    const desc = rightCenter.querySelector('.center-desc');
+    
+    // Immediately hide the label/desc
+    icon.style.display = 'none';
+    label.style.display = 'none';
+    desc.style.opacity = '0';
+    desc.style.visibility = 'hidden';
+    
+    const overlay = rightCenter.querySelector('.input-overlay');
+    const input = rightCenter.querySelector('.grid-input');
+    overlay.classList.add('active');
+    input.value = rightGridValue;
+    input.focus();
+    input.select();
+  });
+  
+  // Handle left input confirm
+  leftCenter.querySelector('.grid-input').addEventListener('blur', function() {
+    const value = this.value.trim();
+    if (value && value !== leftGridValue) {
+      leftGridValue = value;
+      updateLeftGrid();
+      generateAndUpdateLeftKeywords(value);
+      updateFusionButton();
+    }
+    leftCenter.querySelector('.input-overlay').classList.remove('active');
+    isLeftEditing = false;
+  });
+  
+  leftCenter.querySelector('.grid-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const value = this.value.trim();
+      if (value && value !== leftGridValue) {
+        leftGridValue = value;
+        updateLeftGrid();
+        generateAndUpdateLeftKeywords(value);
+        updateFusionButton();
+      }
+      leftCenter.querySelector('.input-overlay').classList.remove('active');
+      isLeftEditing = false;
+    }
+    if (e.key === 'Escape') {
+      leftCenter.querySelector('.input-overlay').classList.remove('active');
+      isLeftEditing = false;
+    }
+  });
+  
+  // Generate keywords for left grid
+  async function generateAndUpdateLeftKeywords(term) {
+    leftKeywords = await generateKeywords(term, true);
+    if (leftKeywords && leftKeywords.length > 0) {
+      updateSurroundingItems(leftCenter, leftKeywords);
+    }
+  }
+  
+  // Handle right input confirm
+  rightCenter.querySelector('.grid-input').addEventListener('blur', function() {
+    const value = this.value.trim();
+    if (value && value !== rightGridValue) {
+      rightGridValue = value;
+      updateRightGrid();
+      generateAndUpdateRightKeywords(value);
+      updateFusionButton();
+    }
+    rightCenter.querySelector('.input-overlay').classList.remove('active');
+    isRightEditing = false;
+  });
+  
+  rightCenter.querySelector('.grid-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const value = this.value.trim();
+      if (value && value !== rightGridValue) {
+        rightGridValue = value;
+        updateRightGrid();
+        generateAndUpdateRightKeywords(value);
+        updateFusionButton();
+      }
+      rightCenter.querySelector('.input-overlay').classList.remove('active');
+      isRightEditing = false;
+    }
+    if (e.key === 'Escape') {
+      rightCenter.querySelector('.input-overlay').classList.remove('active');
+      isRightEditing = false;
+    }
+  });
+  
+  // Generate keywords for right grid
+  async function generateAndUpdateRightKeywords(term) {
+    rightKeywords = await generateKeywords(term, false);
+    if (rightKeywords && rightKeywords.length > 0) {
+      updateSurroundingItems(rightCenter, rightKeywords);
+    }
+  }
+  
+  // Update left grid display
+  function updateLeftGrid() {
+    if (leftGridValue) {
+      const icon = leftCenter.querySelector('.center-icon');
+      const label = leftCenter.querySelector('.center-label');
+      const desc = leftCenter.querySelector('.center-desc');
+      
+      icon.style.display = 'none';
+      label.style.display = 'none';
+      desc.textContent = leftGridValue;
+      desc.style.marginTop = '0';
+      desc.style.opacity = '1';
+      desc.style.visibility = 'visible';
+      desc.style.fontSize = '12px';
+      desc.style.fontWeight = '600';
+    }
+  }
+  
+  // Update right grid display
+  function updateRightGrid() {
+    if (rightGridValue) {
+      const icon = rightCenter.querySelector('.center-icon');
+      const label = rightCenter.querySelector('.center-label');
+      const desc = rightCenter.querySelector('.center-desc');
+      
+      icon.style.display = 'none';
+      label.style.display = 'none';
+      desc.textContent = rightGridValue;
+      desc.style.marginTop = '0';
+      desc.style.opacity = '1';
+      desc.style.visibility = 'visible';
+      desc.style.fontSize = '12px';
+      desc.style.fontWeight = '600';
+    }
+  }
+  
+  // Update surrounding grid items with keywords
+  function updateSurroundingItems(centerElement, keywords) {
+    const parent = centerElement.parentElement;
+    const items = parent.querySelectorAll('.grid-item:not(.grid-center)');
+    items.forEach((item, index) => {
+      item.classList.add('with-icon');
+      if (index < keywords.length) {
+        item.innerHTML = '<span style="font-size: 11px; font-weight: 600; text-align: center; color: #6a1cf6; line-height: 1.3;">' + keywords[index] + '</span>';
+      }
+    });
+  }
+  
+  // Update fusion button state
+  function updateFusionButton() {
+    if (leftGridValue && rightGridValue) {
+      // Remove old listeners
+      const oldBtn = fusionBtn;
+      const newBtn = oldBtn.cloneNode(true);
+      oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+      
+      // Reassign reference
+      const fusionBtnNew = document.getElementById('fusion-btn');
+      fusionBtnNew.classList.remove('disabled');
+      fusionBtnNew.classList.add('enabled');
+      fusionBtnNew.addEventListener('click', handleFusion);
+    }
+  }
+  
+  // Handle fusion button click with animation
+  async function handleFusion() {
+    if (leftGridValue && rightGridValue && leftKeywords.length > 0 && rightKeywords.length > 0) {
+      // Show loading state in results
+      const resultsSection = document.querySelector('section');
+      showResultsLoading();
+      
+      // Scroll to results DURING animation
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+      
+      // Get left and right grid positions for particle animation
+      const leftRect = leftCenter.getBoundingClientRect();
+      const rightRect = rightCenter.getBoundingClientRect();
+      const leftX = leftRect.left + leftRect.width / 2;
+      const leftY = leftRect.top + leftRect.height / 2;
+      const rightX = rightRect.left + rightRect.width / 2;
+      const rightY = rightRect.top + rightRect.height / 2;
+      
+      // Create particles flowing from left and right
+      const particleCount = 42;
+      for (let p = 0; p < particleCount; p++) {
+        // Left particle stream
+        const leftParticle = document.createElement('div');
+        leftParticle.className = 'fusion-particle from-left';
+        
+        // Random offset from center for varied starting points
+        const offsetLeft = (Math.random() - 0.5) * 60;
+        const offsetTop = (Math.random() - 0.5) * 60;
+        leftParticle.style.left = (leftX + offsetLeft) + 'px';
+        leftParticle.style.top = (leftY + offsetTop) + 'px';
+        
+        const size = 1.5 + Math.random() * 2;
+        leftParticle.innerHTML = '<div style="background: #6a1cf6; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; opacity: ' + (0.25 + Math.random() * 0.35) + ';"></div>';
+        
+        // Add delay for stream effect
+        leftParticle.style.animationDelay = (p * 0.05) + 's';
+        
+        document.body.appendChild(leftParticle);
+        
+        setTimeout(() => {
+          leftParticle.remove();
+        }, 2400 + p * 50);
+        
+        // Right particle stream
+        const rightParticle = document.createElement('div');
+        rightParticle.className = 'fusion-particle from-right';
+        
+        // Random offset from center for varied starting points
+        const offsetRight = (Math.random() - 0.5) * 60;
+        const offsetTopRight = (Math.random() - 0.5) * 60;
+        rightParticle.style.left = (rightX + offsetRight) + 'px';
+        rightParticle.style.top = (rightY + offsetTopRight) + 'px';
+        
+        rightParticle.innerHTML = '<div style="background: #6a1cf6; width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; opacity: ' + (0.25 + Math.random() * 0.35) + ';"></div>';
+        
+        // Add delay for stream effect
+        rightParticle.style.animationDelay = (p * 0.05) + 's';
+        
+        document.body.appendChild(rightParticle);
+        
+        setTimeout(() => {
+          rightParticle.remove();
+        }, 2400 + p * 50);
+      }
+      
+      // Generate business ideas while animation plays
+      const ideas = await generateBusinessIdeas(leftGridValue, leftKeywords, rightGridValue, rightKeywords);
+      
+      // Update results after animation completes
+      setTimeout(() => {
+        if (ideas && ideas.length > 0) {
+          updateResultsDisplay(ideas);
+        } else {
+          updateResultsError();
+        }
+      }, 2300);
+    }
+  }
+  
+  // Show loading state in results
+  function showResultsLoading() {
+    const resultsContainer = document.querySelector('.divide-y');
+    resultsContainer.innerHTML = '<div class="p-6 bg-surface-container/20 border-b border-outline-variant/10 text-center"><p class="text-on-surface-variant text-sm font-medium">灵感流生成中<span class="loading-dots">.</span></p></div>';
+    
+    // Animate the dots
+    const dotsElement = resultsContainer.querySelector('.loading-dots');
+    let dotCount = 1;
+    const dotsInterval = setInterval(() => {
+      dotCount = (dotCount % 3) + 1;
+      dotsElement.textContent = '.'.repeat(dotCount);
+    }, 400);
+    
+    // Store interval ID for cleanup if needed
+    resultsContainer.dataset.dotsInterval = dotsInterval;
+  }
+  
+  // Update results display with generated ideas
+  function updateResultsDisplay(ideas) {
+    const resultsContainer = document.querySelector('.divide-y');
+    const icons = ['rocket_launch', 'view_kanban', 'lightbulb', 'trending_up', 'auto_awesome'];
+    
+    // Clear loading animation interval if it exists
+    if (resultsContainer.dataset.dotsInterval) {
+      clearInterval(parseInt(resultsContainer.dataset.dotsInterval));
+      delete resultsContainer.dataset.dotsInterval;
+    }
+    
+    // Clear loading state and keep footer
+    resultsContainer.innerHTML = `
+      <div class="p-6 bg-surface-container/20 border-t border-outline-variant/10 text-center">
+        <p class="text-on-surface-variant text-sm font-medium">更多灵感正在融合中，等待您的下一次点击。</p>
+      </div>
+    `;
+    
+    // Add ideas progressively from bottom to top
+    ideas.forEach((idea, idx) => {
+      setTimeout(() => {
+        const icon = icons[idx % icons.length];
+        const title = idea.title || '未知点子';
+        const description = idea.description || '暂无描述';
+        const leftKeyword = idea.leftKeyword || '';
+        const rightKeyword = idea.rightKeyword || '';
+        
+        // Build combination text
+        let combinationText = '';
+        if (leftKeyword && rightKeyword) {
+          combinationText = `<span class="text-xs text-primary font-semibold">🔗 ${leftKeyword} × ${rightKeyword}</span>`;
+        }
+        
+        const itemHTML = document.createElement('div');
+        itemHTML.className = 'stream-item group flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8 p-6 md:p-8 hover:bg-surface-container/30 transition-all duration-300 animate-slide-up';
+        itemHTML.innerHTML = `
+          <div class="stream-icon w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary transition-transform flex-shrink-0">
+            <span class="material-symbols-outlined" data-icon="${icon}">${icon}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-3 mb-2">
+              <h4 class="font-headline font-bold text-xl text-on-surface">${title}</h4>
+              <span class="px-2 py-0.5 bg-tertiary-container/20 text-tertiary text-[10px] font-bold uppercase rounded">NEW</span>
+            </div>
+            ${combinationText ? '<div class="mb-2">' + combinationText + '</div>' : ''}
+            <p class="text-on-surface-variant text-sm line-clamp-3 md:line-clamp-2">${description}</p>
+          </div>
+          <div class="flex items-center gap-2 w-full md:w-auto mt-4 md:mt-0 md:ml-4">
+            <button class="flex items-center justify-center p-2 rounded-xl text-on-surface-variant hover:bg-surface-container transition-colors copy-btn" title="复制点子">
+              <span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+            </button>
+          </div>
+        `;
+        
+        // Insert at beginning to build from bottom up
+        const firstItem = resultsContainer.querySelector('.stream-item');
+        if (firstItem) {
+          firstItem.parentNode.insertBefore(itemHTML, firstItem);
+        } else {
+          resultsContainer.insertBefore(itemHTML, resultsContainer.firstChild);
+        }
+        
+        // Scroll to results when first idea appears
+        if (idx === 0) {
+          setTimeout(() => {
+            itemHTML.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+        
+        // Add copy functionality to this item
+        itemHTML.querySelector('.copy-btn').addEventListener('click', function() {
+          const ideaItem = this.closest('.stream-item');
+          const titleEl = ideaItem.querySelector('h4');
+          const descEl = ideaItem.querySelector('p');
+          const title = titleEl ? titleEl.textContent : '';
+          const description = descEl ? descEl.textContent : '';
+          const text = title + '\n' + description;
+          
+          navigator.clipboard.writeText(text).then(() => {
+            // Show feedback
+            const originalIcon = this.innerHTML;
+            this.innerHTML = '<span class="material-symbols-outlined" data-icon="check">check</span>';
+            setTimeout(() => {
+              this.innerHTML = originalIcon;
+            }, 2000);
+          }).catch(err => {
+            console.error('复制失败:', err);
+            alert('复制失败，请重试');
+          });
+        });
+      }, idx * 150); // 150ms delay between each item appearing
+    });
+  }
+  
+  // Show error state
+  function updateResultsError() {
+    const resultsContainer = document.querySelector('.divide-y');
+    resultsContainer.innerHTML = `
+      <div class="stream-item flex flex-col items-center justify-center gap-4 p-12 text-center">
+        <span class="material-symbols-outlined text-4xl text-outline-variant opacity-50">error_outline</span>
+        <div>
+          <h4 class="font-headline font-bold text-lg text-on-surface mb-2">生成失败</h4>
+          <p class="text-on-surface-variant text-sm">请检查网络连接或重试。</p>
+        </div>
+      </div>
+      <div class="p-6 bg-surface-container/20 border-t border-outline-variant/10 text-center">
+        <p class="text-on-surface-variant text-sm font-medium">更多灵感正在融合中，等待您的下一次点击。</p>
+      </div>
+    `;
+  }
+  
+  // Add refresh button functionality
+  const refreshBtn = document.getElementById('refresh-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => {
+      location.reload();
+    });
+  }
+</script>
+</body>
+</html>
