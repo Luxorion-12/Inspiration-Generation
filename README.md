@@ -172,18 +172,3 @@ npm run dev
 - DeepSeek API 可能较慢，请耐心等待
 - 检查网络连接
 
-## 📄 许可证
-
-MIT License
-
-## 👨‍💼 作者
-
-Created with ❤️
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
----
-
-**提示：** 分享项目时，请确保 `.env` 文件不被包含，只分享 `.env.example` 作为参考。
