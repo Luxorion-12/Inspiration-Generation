@@ -24,7 +24,7 @@
 1. **克隆仓库**
 ```bash
 git clone <repository-url>
-cd inspiration-fusion-generator
+cd Inspiration-Generation
 ```
 
 2. **安装依赖**
